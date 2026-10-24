@@ -18,6 +18,10 @@ jobs:
           mkdir -p app_source
           unzip -o flutter-video-app.zip -d app_source
 
+      - name: Make gradlew executable
+        run: |
+          find app_source -name "gradlew" -exec chmod +x {} \;
+
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -36,7 +40,7 @@ jobs:
             cd "$CD_DIR"
             flutter clean
             flutter pub get
-            flutter build apk --release --verbose
+            flutter build apk --release
           else
             echo "pubspec.yaml not found!"
             exit 1
