@@ -18,12 +18,6 @@ jobs:
           mkdir -p app_source
           unzip -o flutter-video-app.zip -d app_source
 
-      - name: Fix Gradle Wrapper and Permissions
-        run: |
-          find app_source -name "gradlew" -exec chmod +x {} \;
-          find app_source -name "gradle-wrapper.properties" -exec sed -i 's/gradle-.*-bin.zip/gradle-7.5-all.zip/g' {} \;
-          find app_source -name "gradle-wrapper.properties" -exec sed -i 's/gradle-.*-all.zip/gradle-7.5-all.zip/g' {} \;
-
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
@@ -35,11 +29,24 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Build APK
+      - name: Build APK and Fix Android Structure
         run: |
-          CD_DIR=$(find app_source -name "pubspec.yaml" -exec dirname {} \;)
+          CD_DIR=$(find app_source -name "pubspec.yaml" -exec dirname {} \; | head -n 1)
           if [ -n "$CD_DIR" ]; then
             cd "$CD_DIR"
+            echo "Found project at: $CD_DIR"
+            
+            # If android folder is missing, generate it automatically
+            if [ ! -d "android" ]; then
+              echo "Android folder missing. Generating Android files..."
+              flutter create . --platforms=android
+            fi
+            
+            # Fix gradlew permissions
+            if [ -f "android/gradlew" ]; then
+              chmod +x android/gradlew
+            fi
+            
             flutter pub get
             flutter build apk --release
           else
