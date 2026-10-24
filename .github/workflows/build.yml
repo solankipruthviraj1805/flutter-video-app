@@ -38,7 +38,6 @@ jobs:
           CD_DIR=$(find app_source -name "pubspec.yaml" -exec dirname {} \;)
           if [ -n "$CD_DIR" ]; then
             cd "$CD_DIR"
-            flutter clean
             flutter pub get
             flutter build apk --release
           else
