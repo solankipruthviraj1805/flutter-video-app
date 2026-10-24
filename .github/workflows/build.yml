@@ -18,9 +18,11 @@ jobs:
           mkdir -p app_source
           unzip -o flutter-video-app.zip -d app_source
 
-      - name: Make gradlew executable
+      - name: Fix Gradle Wrapper and Permissions
         run: |
           find app_source -name "gradlew" -exec chmod +x {} \;
+          find app_source -name "gradle-wrapper.properties" -exec sed -i 's/gradle-.*-bin.zip/gradle-7.5-all.zip/g' {} \;
+          find app_source -name "gradle-wrapper.properties" -exec sed -i 's/gradle-.*-all.zip/gradle-7.5-all.zip/g' {} \;
 
       - name: Set up Java
         uses: actions/setup-java@v3
