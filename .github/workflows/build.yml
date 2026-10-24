@@ -27,6 +27,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.19.0'
           channel: 'stable'
 
       - name: Build APK
@@ -34,9 +35,9 @@ jobs:
           CD_DIR=$(find app_source -name "pubspec.yaml" -exec dirname {} \;)
           if [ -n "$CD_DIR" ]; then
             cd "$CD_DIR"
-            flutter doctor -v
+            flutter clean
             flutter pub get
-            flutter build apk --release --verbose
+            flutter build apk --release
           else
             echo "pubspec.yaml not found!"
             exit 1
