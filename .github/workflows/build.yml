@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -34,10 +34,13 @@ jobs:
           CD_DIR=$(find app_source -name "pubspec.yaml" -exec dirname {} \;)
           if [ -n "$CD_DIR" ]; then
             cd "$CD_DIR"
+            flutter doctor -v
+            flutter pub get
+            flutter build apk --release --verbose
+          else
+            echo "pubspec.yaml not found!"
+            exit 1
           fi
-          flutter clean
-          flutter pub get
-          flutter build apk --release --no-build-cache
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
